@@ -1,0 +1,3 @@
+/Users/moa/Desktop/dh2323/CgLab2/build/CMakeFiles/SecondLab.dir
+/Users/moa/Desktop/dh2323/CgLab2/build/CMakeFiles/ALL_BUILD.dir
+/Users/moa/Desktop/dh2323/CgLab2/build/CMakeFiles/ZERO_CHECK.dir
