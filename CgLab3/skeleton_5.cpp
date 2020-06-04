@@ -191,8 +191,7 @@ void VertexShader( const Vertex& v, Pixel& p ) {
     vec3 D = lightPower * angle / A;
     p.illumination = currentReflectance * (D + indirectLightPowerPerArea);
 }
- 
- 
+
 // 3. To draw lines in 2D you can use a function that does linear interpolation similar to what you wrote for the first lab. Instead of interpolating pixel colors represented by glm::vec3 we will interpolate pixel positions represented by glm::ivec2.
 void Interpolate( Pixel a, Pixel b, vector<Pixel>& result ) {
     int N = result.size();
@@ -200,9 +199,11 @@ void Interpolate( Pixel a, Pixel b, vector<Pixel>& result ) {
     float step_x = (b.x - a.x) / (float)(glm::max(N - 1, 1));
     float step_y = (b.y - a.y) / (float)(glm::max(N - 1, 1));
     float step_z = (b.zinv - a.zinv) / (float)(glm::max(N - 1, 1));
- 
-    vec3 step_pos3d = (b.pos3d - a.pos3d) / (float)(glm::max(N - 1, 1)); // 6.1/6.2
+    
     vec3 step_illumination = (b.illumination - a.illumination) / (float)(glm::max(N - 1, 1));
+    
+    vec3 step_pos3d = (b.pos3d*b.zinv - a.pos3d*a.zinv)/float(max(N-1,1));  // 6.1/6.2 // multiply with zinv for fig 7
+    vec3 pos3d(a.pos3d*a.zinv); // save current pos3d
     
     Pixel current( a );
     for( int i=0; i<N; ++i ) {
@@ -210,12 +211,12 @@ void Interpolate( Pixel a, Pixel b, vector<Pixel>& result ) {
         current.y = a.y + i * step_y;
         current.zinv = a.zinv + i * step_z;
         current.illumination += step_illumination;
-        current.pos3d += step_pos3d;
- 
+        current.pos3d = pos3d / current.zinv; // divide with zinv for fig 7
+        pos3d += step_pos3d; // save new current pos3d
+        
         result[i] = current;
     }
 }
- 
  
 void DrawLineSDL( Pixel a, Pixel b, vec3 color ) {
     // 3. If a and b represent the start and end of the line segment we can then compute the number of pixels to draw as:
